@@ -21,12 +21,6 @@ public class UserManagementVerticle extends AbstractVerticle {
 
     private HttpServer server;
 
-    final List<JsonObject> users = new ArrayList<>(Arrays.asList(
-            new JsonObject().put("id", 1).put("name", "Fufi").put("password", "ABC"),
-            new JsonObject().put("id", 2).put("name", "Garfield").put("password", "XYZ"),
-            new JsonObject().put("id", 3).put("name", "Puffa").put("password", "XYZ")
-    ));
-
     @Override
     public void start(Promise<Void> startPromise) {
         RouterBuilder.create(this.vertx, "user-management.yaml")
@@ -41,6 +35,7 @@ public class UserManagementVerticle extends AbstractVerticle {
                                     .end(new JsonArray(getAllUsers()).encode()) // <3>
                     );
                     // end::listUSersHandler[]
+
                     // tag::createUSersHandler[]
                     routerBuilder.operation("createUser").handler(routingContext -> {
                         RequestParameters params = routingContext.get(ValidationHandler.REQUEST_CONTEXT_KEY); // <1>
@@ -49,7 +44,7 @@ public class UserManagementVerticle extends AbstractVerticle {
                         routingContext
                                 .response()
                                 .setStatusCode(200)
-                                .end(); // <3>
+                                .end(user.encode()); // <3>
                     });
                     // end::createUSersHandler[]
                     // tag::showUSerByIdHandler[]
@@ -138,4 +133,10 @@ public class UserManagementVerticle extends AbstractVerticle {
         // end::loadSpec[]
     }
     // end::loadSpecSampleMethod[]
+
+    final List<JsonObject> users = new ArrayList<>(Arrays.asList(
+            new JsonObject().put("id", 1).put("name", "Fufi").put("password", "ABC"),
+            new JsonObject().put("id", 2).put("name", "Garfield").put("password", "XYZ"),
+            new JsonObject().put("id", 3).put("name", "Puffa").put("password", "XYZ")
+    ));
 }
